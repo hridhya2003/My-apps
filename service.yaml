@@ -2,10 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-app-service
+  labels:
+    app: my-app
 spec:
+  type: LoadBalancer  # Use ClusterIP for internal access or NodePort if needed
   selector:
-    app: my-apps
+    app: my-app
   ports:
-    - port: 80  # Exposed port
-      targetPort: 8080  # Container's internal port
-  type: LoadBalancer  # External access to the service
+    - protocol: TCP
+      port: 80  # External port
+      targetPort: 8080  # Matches container port in Deployment

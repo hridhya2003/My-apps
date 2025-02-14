@@ -1,17 +1,36 @@
 steps:
-  - name: 'gcr.io/cloud-builders/kubectl'
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
     args:
-      - 'get'
-      - 'nodes'
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+      - 'build'
+      - '-t'
+      - 'gcr.io/git123/my-app:$SHORT_SHA'
+      - '.'
 
+  # Step 2: Push Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/git123/my-app:$SHORT_SHA'
+
+  # Step 3: Authenticate kubectl with GKE
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - 'my-cluster'
+      - '--zone=us-central1-a'
+      - '--project=git123'
+
+  # Step 4: Deploy the updated image using kubectl
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
-      - 'apply'
-      - '-f'
-      - 'deployment.yaml'
+      - 'set'
+      - 'image'
+      - 'deployment/my-app-deployment'
+      - 'my-apps=gcr.io/git123/my-app:$SHORT_SHA'
+      - '--namespace=default'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
