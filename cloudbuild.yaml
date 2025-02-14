@@ -4,14 +4,14 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/git123/my-app:$SHORT_SHA'
+      - 'gcr.io/git123/my-app:${SHORT_SHA:-latest}'  # ✅ Default to 'latest' if SHORT_SHA is empty
       - '.'
 
   # Step 2: Push Docker image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'gcr.io/git123/my-app:$SHORT_SHA'
+      - 'gcr.io/git123/my-app:${SHORT_SHA:-latest}'  # ✅ Default to 'latest'
 
   # Step 3: Authenticate kubectl with GKE
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -29,7 +29,7 @@ steps:
       - 'set'
       - 'image'
       - 'deployment/my-app-deployment'
-      - 'my-app=gcr.io/git123/my-app:$SHORT_SHA'  # ✅ Corrected container name
+      - 'my-app=gcr.io/git123/my-app:${SHORT_SHA:-latest}'  # ✅ Default to 'latest'
       - '--namespace=default'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
