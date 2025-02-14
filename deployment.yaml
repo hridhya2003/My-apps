@@ -15,7 +15,7 @@ spec:
         app: my-app
     spec:
       containers:
-        - name: my-apps
-          image: gcr.io/git123/my-apps:latest  # Replace with your project ID
+        - name: my-apps  # Matches with cloudbuild.yaml
+          image: gcr.io/git123/my-app:latest  # Ensure consistency
           ports:
             - containerPort: 8080  # Port inside the container

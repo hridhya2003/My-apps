@@ -1,15 +1,11 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/cloud-builders/kubectl'
     args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/git123/my-app:latest'
-      - '.'
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'gcr.io/git123/my-app:latest'
+      - 'get'
+      - 'nodes'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
