@@ -26,7 +26,7 @@ steps:
       - '--namespace=default'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'  # Change to your GKE cluster zone
-      - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'  # Change to your GKE cluster name
+      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'  # Change to your GKE cluster name
 
 images:
   - 'gcr.io/$PROJECT_ID/my-app:$SHORT_SHA'
