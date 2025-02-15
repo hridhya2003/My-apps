@@ -5,7 +5,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/git123/my-app:latest'
+      - 'gcr.io/$PROJECT_ID/my-apps:$SHORT_SHA'  # Updated image name
       - '.'
 
   # Step 2: Push Docker Image to Google Container Registry (GCR)
@@ -13,22 +13,24 @@ steps:
     id: 'Push Docker Image'
     args:
       - 'push'
-      - 'gcr.io/git123/my-app:latest'
+      - 'gcr.io/$PROJECT_ID/my-apps:$SHORT_SHA'  # Updated image name
 
   # Step 3: Deploy the Docker Image to GKE
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Deploy to GKE'
+    entrypoint: 'bash'
     args:
-      - 'set'
-      - 'image'
-      - 'deployment/my-app-deployment'
-      - 'my-app=gcr.io/git123/my-app:latest'
-      - '--namespace=default'
+      - '-c'
+      - |
+        gcloud container clusters get-credentials my-gke-cluster --zone=us-central1-a --project=$PROJECT_ID &&
+        kubectl set image deployment/my-app-deployment my-apps=gcr.io/$PROJECT_ID/my-apps:$SHORT_SHA --namespace=default
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'  # Change to your GKE cluster zone
-      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'  # Change to your GKE cluster name
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'  # Ensure this matches your GKE cluster zone
+      - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'  # Ensure this matches your actual cluster name
 
 images:
-  - 'gcr.io/git123/my-app:latest'
+  - 'gcr.io/$PROJECT_ID/my-apps:$SHORT_SHA'  # Updated image name
+
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: GCS_ONLY
+
