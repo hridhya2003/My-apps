@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: my-apps
-          image: gcr.io/my-git-450609/my-app:latest  #
+          image: gcr.io/my-git-450609/my-apps:latest  #
           ports:
             - containerPort: 5000
           env:
